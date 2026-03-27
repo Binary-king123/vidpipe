@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Video {
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique
+  filePath    String
+  thumbnail   String
+  description String
+  views       Int      @default(0)
+  category         String?
+  tags             String[]
+  originalSizeMb   Float?
+  compressedSizeMb Float?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([category])
+  @@index([createdAt])
+}
+
+model VideoQueue {
+  id         Int      @id @default(autoincrement())
+  cdnUrl     String   @unique
+  status     String   @default("pending") // pending | processing | done | failed
+  retryCount Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([status])
+}
