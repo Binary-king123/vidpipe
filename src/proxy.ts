@@ -5,7 +5,7 @@ const LOGIN_PATH = '/alagappan/login'
 const COOKIE_NAME = 'vidpipe_admin_auth'
 const CORRECT_PASSWORD = '861135'
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
 
   // Only protect /alagappan routes
