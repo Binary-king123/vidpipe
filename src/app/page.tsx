@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: 'Watch the best desi and Indian videos online. Thousands of HD videos by category, tags and more.',
 }
 
-const VIDEOS_PER_PAGE = 24
+const VIDEOS_PER_PAGE = 20
 
 interface HomePageProps {
   searchParams: Promise<{ page?: string; cat?: string }>
@@ -19,7 +19,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const page = Math.max(1, parseInt(params.page || '1', 10))
   const cat = params.cat || undefined
 
-  const [videos, total, categories] = await Promise.all([
+  const [videos, total, categories, recentTagsDocs] = await Promise.all([
     prisma.video.findMany({
       where: cat ? { category: cat } : undefined,
       orderBy: { createdAt: 'desc' },
@@ -36,7 +36,22 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       orderBy: { _count: { id: 'desc' } },
       take: 12,
     }),
+    prisma.video.findMany({
+      select: { tags: true },
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+    }),
   ])
+
+  const tagCounts = recentTagsDocs.flatMap(v => v.tags).reduce((acc, tag) => {
+    if (tag) acc[tag] = (acc[tag] || 0) + 1
+    return acc
+  }, {} as Record<string, number>)
+
+  const topTags = Object.entries(tagCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 15)
+    .map(t => t[0])
 
   const totalPages = Math.ceil(total / VIDEOS_PER_PAGE)
 
@@ -69,6 +84,22 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             {c.category} ({c._count.id})
           </Link>
         ))}
+      </div>
+
+      {/* SEO Tag Cloud */}
+      <div className="mb-8">
+        <h3 className="text-gray-400 text-xs uppercase tracking-wider font-semibold mb-3">Popular SEO Tags</h3>
+        <div className="flex flex-wrap gap-2">
+          {topTags.map(tag => (
+            <Link 
+              key={tag} 
+              href={`/tag/${encodeURIComponent(tag)}`}
+              className="text-xs text-pink-500 bg-pink-500/10 hover:bg-pink-500/20 px-2.5 py-1 rounded-md transition"
+            >
+              #{tag}
+            </Link>
+          ))}
+        </div>
       </div>
 
       {/* Video Grid */}

@@ -9,7 +9,7 @@ interface Props {
   searchParams: Promise<{ page?: string }>
 }
 
-const PER_PAGE = 24
+const PER_PAGE = 20
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { name } = await params
