@@ -11,8 +11,8 @@ export function middleware(req: NextRequest) {
   // Only protect /alagappan routes
   if (!pathname.startsWith(ADMIN_PATH)) return NextResponse.next()
 
-  // Let login page through
-  if (pathname === LOGIN_PATH) return NextResponse.next()
+  // Let login page and verify API through
+  if (pathname === LOGIN_PATH || pathname.startsWith(LOGIN_PATH + '/')) return NextResponse.next()
 
   // Check auth cookie
   const authCookie = req.cookies.get(COOKIE_NAME)
