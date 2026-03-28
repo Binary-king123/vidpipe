@@ -38,9 +38,9 @@ function downloadUrl(url: string, destPath: string) {
 }
 
 function processFfmpeg(tmpFile: string, videoPath: string, thumbPath: string, thumbTime: string) {
-  // Compress
+  // Compress to 240p, preserve aspect ratio (no stretch)
   const cRes = spawnSync('ffmpeg', [
-    '-i', tmpFile, '-vf', 'scale=426:240', '-c:v', 'libx264', '-crf', '28',
+    '-i', tmpFile, '-vf', "scale=-2:240", '-c:v', 'libx264', '-crf', '28',
     '-c:a', 'aac', '-b:a', '64k', '-movflags', '+faststart', '-y', videoPath
   ])
   const compressed = cRes.status === 0

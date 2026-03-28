@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import AgeGate from '@/components/AgeGate'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -17,12 +18,17 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  other: {
+    rating: 'adult',
+    'RTA-5042-1996-1400-1577-RTA': 'adult',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="bg-gray-950 text-gray-100 min-h-screen font-sans">
+        <AgeGate />
         {/* Navigation */}
         <header className="sticky top-0 z-50 bg-gray-950/90 backdrop-blur-sm border-b border-gray-800">
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
@@ -47,9 +53,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <footer className="border-t border-gray-800 mt-12 py-8 text-center text-sm text-gray-600">
           <div className="max-w-7xl mx-auto px-4">
             <p>&copy; {new Date().getFullYear()} iLoveDesi. All rights reserved.</p>
-            <p className="mt-1">
-              <Link href="/sitemap.xml" className="hover:text-gray-400">Sitemap</Link>
-            </p>
+            <div className="mt-4 flex flex-wrap justify-center gap-4">
+              <Link href="/terms" className="hover:text-pink-400 transition-colors">Terms of Service</Link>
+              <Link href="/privacy" className="hover:text-pink-400 transition-colors">Privacy Policy</Link>
+              <Link href="/dmca" className="hover:text-pink-400 transition-colors">DMCA</Link>
+              <Link href="/2257" className="hover:text-pink-400 transition-colors">18 U.S.C. 2257</Link>
+              <Link href="/sitemap.xml" className="hover:text-pink-400 transition-colors">Sitemap</Link>
+            </div>
           </div>
         </footer>
       </body>
