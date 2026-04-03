@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://ilovedesi.fun'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const videos = await prisma.video.findMany({
     select: { slug: true, thumbnail: true, title: true, createdAt: true },
@@ -21,12 +23,12 @@ export async function GET() {
 
     return `
   <url>
-    <loc>${APP_URL}/video/${v.slug}</loc>
+    <loc>${escapeXml(`${APP_URL}/video/${v.slug}`)}</loc>
     <lastmod>${v.createdAt.toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>${thumbUrl}</image:loc>
+      <image:loc>${escapeXml(thumbUrl)}</image:loc>
       <image:title>${escapeXml(v.title)}</image:title>
     </image:image>
   </url>`
@@ -36,7 +38,7 @@ export async function GET() {
     .filter((c) => c.category)
     .map((c) => `
   <url>
-    <loc>${APP_URL}/category/${encodeURIComponent(c.category!)}</loc>
+    <loc>${escapeXml(`${APP_URL}/category/${encodeURIComponent(c.category!)}`)}</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>`).join('')
@@ -46,7 +48,7 @@ export async function GET() {
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
-    <loc>${APP_URL}</loc>
+    <loc>${escapeXml(APP_URL)}</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>${videoUrls}${categoryUrls}
