@@ -3,7 +3,7 @@ import { prisma } from '@/lib/db'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://ilovedesi.fun'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600 // Cache sitemap for 1 hour
 
 export async function GET() {
   const videos = await prisma.video.findMany({
